@@ -1,0 +1,27 @@
+# Local test only (docker compose -f test/compose.yml up --build): mirrors the Railway services.
+services:
+  clickhouse:
+    build: ../clickhouse
+    environment: { CLICKHOUSE_PASSWORD: "${CH_PW:?export CH_PW}", PORT: "8123" }
+    volumes: [ "ch:/var/lib/clickhouse" ]
+  nats:
+    build: ../nats
+    environment: { NATS_RECEIVER_PASSWORD: "${NATS_RX_PW:?export NATS_RX_PW}", NATS_ENGINE_PASSWORD: "${NATS_ENG_PW:?export NATS_ENG_PW}", PORT: "8222" }
+    volumes: [ "nats:/data" ]
+  openlit:
+    build: ../openlit
+    environment:
+      PORT: "3000"
+      INIT_DB_HOST: clickhouse
+      INIT_DB_PASSWORD: ${CH_PW:?export CH_PW}
+      NATS_URL: nats://nats:4222
+      NATS_RECEIVER_PASSWORD: ${NATS_RX_PW:?export NATS_RX_PW}
+      NATS_ENGINE_PASSWORD: ${NATS_ENG_PW:?export NATS_ENG_PW}
+      OPENLIT_ADMIN_PASSWORD: ${ADMIN_PW:?export ADMIN_PW}
+      NEXTAUTH_URL: http://localhost:8080
+    volumes: [ "data:/app/client/data" ]
+  gateway:
+    build: ../gateway
+    environment: { PORT: "8080", OPENLIT_HOST: openlit }
+    ports: [ "8080:8080" ]
+volumes: { ch: {}, nats: {}, data: {} }
