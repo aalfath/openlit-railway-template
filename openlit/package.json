@@ -1,0 +1,9 @@
+{
+  "name": "openlit-railway-wrapper",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Admin bootstrap for the OpenLIT Railway template",
+  "dependencies": {
+    "bcryptjs": "2.4.3"
+  }
+}

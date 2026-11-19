@@ -1,0 +1,27 @@
+# Local test only: mirrors the Railway services and variables.
+services:
+  clickhouse:
+    build: ./clickhouse
+    environment: { CLICKHOUSE_PASSWORD: ch-test-pass-123456, PORT: "8123" }
+    volumes: [ "ch:/var/lib/clickhouse" ]
+  nats:
+    build: ./nats
+    environment: { NATS_RECEIVER_PASSWORD: recv-test-pass-1234, NATS_ENGINE_PASSWORD: eng-test-pass-12345, PORT: "8222" }
+    volumes: [ "nats:/data" ]
+  openlit:
+    build: ./openlit
+    environment:
+      PORT: "3000"
+      INIT_DB_HOST: clickhouse
+      INIT_DB_PASSWORD: ch-test-pass-123456
+      NATS_URL: nats://nats:4222
+      NATS_RECEIVER_PASSWORD: recv-test-pass-1234
+      NATS_ENGINE_PASSWORD: eng-test-pass-12345
+      OPENLIT_ADMIN_PASSWORD: admin-test-pass-12345
+      NEXTAUTH_URL: http://localhost:8080
+    volumes: [ "data:/app/client/data" ]
+  gateway:
+    build: ./gateway
+    environment: { PORT: "8080", OPENLIT_HOST: openlit }
+    ports: [ "8080:8080" ]
+volumes: { ch: {}, nats: {}, data: {} }
