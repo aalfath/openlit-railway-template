@@ -28,7 +28,7 @@ cat > /etc/caddy/Caddyfile <<CADDY
 }
 
 :${PORT} {
-	handle /gateway-health {
+	handle /healthz {
 		respond "ok" 200
 	}
 ${SIGNUP}
