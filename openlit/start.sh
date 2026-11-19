@@ -23,6 +23,12 @@ export OTLP_REQUIRE_API_KEY="${OTLP_REQUIRE_API_KEY:-true}"
 # Anonymous usage telemetry to the OpenLIT team is off unless you set it to true.
 export TELEMETRY_ENABLED="${TELEMETRY_ENABLED:-false}"
 
+# An empty reference (no public domain yet) renders as "https://", which breaks
+# NextAuth. Without NEXTAUTH_URL, OpenLIT derives the URL from each request.
+case "${NEXTAUTH_URL:-}" in
+  ""|"https://"|"http://") unset NEXTAUTH_URL ;;
+esac
+
 cd /app/client
 export PATH="/app/client/node_modules/.bin:${PATH}"
 mkdir -p /app/client/data
